@@ -1,0 +1,114 @@
+{
+  "executive_summary": "The submitted Business Requirements Document outlines a cloud-based inventory management platform intended to replace a legacy on-premise system used by a mid-sized retail chain with 47 locations. The core functional scope covers real-time stock tracking, automated reorder triggers, supplier integration via EDI, and a role-based reporting dashboard accessible to store managers and corporate buyers. Several non-functional requirements around data residency, audit logging, and 99.9% uptime SLA are specified but lack measurable acceptance thresholds, which will require clarification before development begins. Overall the document provides a solid foundation for sprint planning, though three areas — offline mode behaviour, returns processing workflow, and bulk import validation rules — need additional detail to avoid scope ambiguity during implementation.",
+  "user_stories": [
+    {
+      "id": "US-001",
+      "role": "store manager",
+      "feature": "view real-time stock levels for all SKUs in my location",
+      "benefit": "I can make informed decisions about floor replenishment without waiting for end-of-day reports",
+      "priority": "High"
+    },
+    {
+      "id": "US-002",
+      "role": "corporate buyer",
+      "feature": "receive automated low-stock alerts with suggested reorder quantities",
+      "benefit": "I can prevent stockouts across all locations without manually monitoring each store",
+      "priority": "High"
+    },
+    {
+      "id": "US-003",
+      "role": "warehouse operator",
+      "feature": "scan incoming shipments and reconcile them against purchase orders",
+      "benefit": "I can confirm receipt accuracy and update inventory counts in real time",
+      "priority": "High"
+    },
+    {
+      "id": "US-004",
+      "role": "finance analyst",
+      "feature": "export inventory valuation reports filtered by date range and location",
+      "benefit": "I can produce accurate COGS figures for monthly close without manual data extraction",
+      "priority": "Medium"
+    },
+    {
+      "id": "US-005",
+      "role": "IT administrator",
+      "feature": "configure role-based access permissions for each user group",
+      "benefit": "I can ensure staff only access data relevant to their responsibilities and maintain compliance",
+      "priority": "Medium"
+    },
+    {
+      "id": "US-006",
+      "role": "store associate",
+      "feature": "look up product availability at nearby locations from a mobile device",
+      "benefit": "I can direct customers to the nearest store that has the item in stock",
+      "priority": "Low"
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "story_id": "US-001",
+      "given": "a store manager is logged in and has selected their location",
+      "when": "they navigate to the Stock Overview dashboard",
+      "then": "all SKUs for that location are displayed with quantities updated within the last 60 seconds"
+    },
+    {
+      "story_id": "US-002",
+      "given": "a SKU's on-hand quantity falls below its configured reorder threshold",
+      "when": "the inventory service processes the next stock update cycle",
+      "then": "an alert email is sent to the assigned corporate buyer within 5 minutes containing the SKU, current quantity, and suggested reorder amount"
+    },
+    {
+      "story_id": "US-003",
+      "given": "a warehouse operator scans a shipment barcode linked to an open purchase order",
+      "when": "all line items are scanned and quantities are confirmed",
+      "then": "the purchase order status changes to Received, inventory counts are incremented, and a receipt record is created with a timestamp and operator ID"
+    },
+    {
+      "story_id": "US-004",
+      "given": "a finance analyst selects a date range and one or more locations",
+      "when": "they click Export Inventory Valuation",
+      "then": "a CSV file is downloaded within 10 seconds containing SKU, description, quantity on hand, unit cost, and total value for the selected filters"
+    },
+    {
+      "story_id": "US-005",
+      "given": "an IT administrator is on the User Management screen",
+      "when": "they assign a role to a user account and save",
+      "then": "the user's session permissions are updated immediately and an audit log entry is created recording the change, the administrator's ID, and the timestamp"
+    },
+    {
+      "story_id": "US-006",
+      "given": "a store associate searches for a product by name or SKU on the mobile app",
+      "when": "the search returns results",
+      "then": "each result shows the quantity available at each location within a 50-mile radius, sorted by distance"
+    }
+  ],
+  "gap_flags": [
+    {
+      "type": "Missing Requirement",
+      "severity": "High",
+      "description": "The BRD specifies offline mode as a supported capability for store associates but provides no detail on which operations must function without connectivity, how long offline data should be retained, or how conflicts are resolved when the device reconnects. Without this, the engineering team cannot scope the sync architecture or estimate effort accurately."
+    },
+    {
+      "type": "Ambiguous Acceptance Criteria",
+      "severity": "High",
+      "description": "The 99.9% uptime SLA is stated as a non-functional requirement but no measurement window, exclusion periods (e.g. planned maintenance), or monitoring methodology is defined. This makes the SLA unenforceable and creates risk during vendor contract negotiations."
+    },
+    {
+      "type": "Incomplete Workflow",
+      "severity": "Medium",
+      "description": "The returns processing workflow is referenced in section 4.3 as in scope but no user stories, process steps, or data requirements are provided for it. Returns directly affect inventory counts and financial reporting, so this gap should be resolved before the first sprint."
+    },
+    {
+      "type": "Unclear Constraint",
+      "severity": "Medium",
+      "description": "Data residency requirements mention that all customer data must remain within the EU, but the BRD does not classify which data fields are considered customer data versus operational data. This ambiguity could affect database schema design, cloud region selection, and GDPR compliance posture."
+    }
+  ],
+  "tokens_used": 1847,
+  "processing_time_ms": 4213,
+  "model_used": "gemini-2.0-flash",
+  "document_id": "a3f8c2d1-7e45-4b09-9f6a-2c81d0e53b74",
+  "session_id": "f1d4e7a2-3c90-4e58-b2d7-8a05f6c91e30",
+  "db_persisted": true,
+  "request_id": "9b2e5f83-1a47-4d6c-8e3b-c70d4f2a1598"
+}
