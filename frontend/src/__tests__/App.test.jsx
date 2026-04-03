@@ -8,6 +8,8 @@ vi.mock('../api/client.js', () => ({
   analyzeDocument: vi.fn(),
   fetchVoiceSummary: vi.fn(),
   fetchVoiceStory: vi.fn(),
+  fetchSampleText: vi.fn(),
+  analyzeDemoMode: vi.fn(),
 }));
 
 // Feature: react-frontend, Property 4: Error handling restores UI state
@@ -37,9 +39,9 @@ describe('App', () => {
           const analyzeBtn = screen.getByTestId('analyze-btn');
           fireEvent.click(analyzeBtn);
 
-          // Wait for the error state to settle
+          // Wait for the error message to appear
           await waitFor(() => {
-            expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
+            expect(screen.getByTestId('error-message')).toBeTruthy();
           });
 
           // Error message should be visible and non-empty
