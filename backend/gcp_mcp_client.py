@@ -40,12 +40,15 @@ class GCPMCPClient:
     """Manages a subprocess connection to the GCP MCP server via stdio transport."""
 
     def __init__(self, config_path: str = "mcp/gcp-mcp-server/mcp_config.json") -> None:
-        with open(config_path, "r", encoding="utf-8") as f:
-            config = json.load(f)
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = json.load(f)
+        except FileNotFoundError:
+            config = {}
 
-        gcp = config["mcpServers"]["gcp"]
-        self._command: str = gcp["command"]
-        self._args: list[str] = gcp["args"]
+        gcp = config.get("mcpServers", {}).get("gcp", {})
+        self._command: str = gcp.get("command", "npx")
+        self._args: list[str] = gcp.get("args", ["-y", "@modelcontextprotocol/server-gcp"])
         self._env: dict[str, str] = gcp.get("env", {})
 
         self._process: asyncio.subprocess.Process | None = None

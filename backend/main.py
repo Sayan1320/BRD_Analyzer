@@ -61,7 +61,10 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 # Module-level GCP MCP client
 # ---------------------------------------------------------------------------
 
-gcp_client = GCPMCPClient()
+try:
+    gcp_client = GCPMCPClient()
+except Exception:
+    gcp_client = None
 
 
 @asynccontextmanager
@@ -75,11 +78,11 @@ async def lifespan(app: FastAPI):
     from database import init_db
     await init_db()
 
-    await gcp_client.connect()
+    await gcp_client.connect() if gcp_client else None
     try:
         yield
     finally:
-        await gcp_client.close()
+        await gcp_client.close() if gcp_client else None
 
 
 app = FastAPI(lifespan=lifespan)
@@ -107,6 +110,8 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 # ---------------------------------------------------------------------------
 
 async def _call(tool_name: str, arguments: dict) -> dict[str, Any]:
+    if gcp_client is None:
+        raise HTTPException(status_code=503, detail="GCP MCP server not configured")
     try:
         result = await gcp_client.call_tool(tool_name, arguments)
         return {"status": "ok", "output": result.content}
