@@ -81,11 +81,17 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning("db_init_failed_at_startup", error=str(exc))
 
-    await gcp_client.connect() if gcp_client else None
+    try:
+        await gcp_client.connect() if gcp_client else None
+    except Exception as exc:
+        logger.warning("gcp_mcp_connect_failed", error=str(exc))
     try:
         yield
     finally:
-        await gcp_client.close() if gcp_client else None
+        try:
+            await gcp_client.close() if gcp_client else None
+        except Exception:
+            pass
 
 
 app = FastAPI(lifespan=lifespan)

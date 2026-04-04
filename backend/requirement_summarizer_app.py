@@ -84,9 +84,15 @@ async def _write_voice_audit(db_factory, endpoint: str, voice: str, duration_ms:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Validate env vars and initialize DB on startup."""
-    validate_env_vars()
+    try:
+        validate_env_vars()
+    except RuntimeError as exc:
+        logger.warning("env_vars_missing_at_startup", error=str(exc))
     from database import init_db
-    await init_db()
+    try:
+        await init_db()
+    except Exception as exc:
+        logger.warning("db_init_failed_at_startup", error=str(exc))
     yield
 
 
