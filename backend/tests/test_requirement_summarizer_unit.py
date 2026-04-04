@@ -54,7 +54,10 @@ def _make_test_client(
 
     mock_session_record = MagicMock()
     mock_session_record.id = "00000000-0000-0000-0000-000000000001"
+    mock_doc = MagicMock()
+    mock_doc.id = "00000000-0000-0000-0000-000000000002"
     mock_db = AsyncMock()
+    mock_db.add = MagicMock()  # db.add is sync
 
     if db_raises is not None:
         async def _failing_get_session():
@@ -80,6 +83,9 @@ def _make_test_client(
     with (
         get_session_patch,
         patch("requirement_summarizer_app.create_session_record", new=AsyncMock(return_value=mock_session_record)),
+        patch("requirement_summarizer_app.save_document_metadata", new=AsyncMock(return_value=mock_doc)),
+        patch("requirement_summarizer_app.save_analysis_result", new=AsyncMock(return_value=MagicMock())),
+        patch("requirement_summarizer_app.update_document_status", new=AsyncMock()),
         patch("requirement_summarizer_app.update_session_extraction", new=AsyncMock()),
         patch("requirement_summarizer_app.update_session_result", new=AsyncMock()),
         patch.object(_ocr, "extract_text", return_value=extraction),
@@ -139,7 +145,10 @@ def test_analyze_valid_txt_response_shape():
 
     mock_session_record = MagicMock()
     mock_session_record.id = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    mock_doc = MagicMock()
+    mock_doc.id = "aaaaaaaa-bbbb-cccc-dddd-ffffffffffff"
     mock_db = AsyncMock()
+    mock_db.add = MagicMock()
 
     async def _ok_get_session():
         yield mock_db
@@ -157,6 +166,9 @@ def test_analyze_valid_txt_response_shape():
     with (
         patch("requirement_summarizer_app.get_session", side_effect=_ok_get_session),
         patch("requirement_summarizer_app.create_session_record", new=AsyncMock(return_value=mock_session_record)),
+        patch("requirement_summarizer_app.save_document_metadata", new=AsyncMock(return_value=mock_doc)),
+        patch("requirement_summarizer_app.save_analysis_result", new=AsyncMock(return_value=MagicMock())),
+        patch("requirement_summarizer_app.update_document_status", new=AsyncMock()),
         patch("requirement_summarizer_app.update_session_extraction", new=AsyncMock()),
         patch("requirement_summarizer_app.update_session_result", new=AsyncMock()),
         patch.object(_ocr, "extract_text", return_value=extraction),

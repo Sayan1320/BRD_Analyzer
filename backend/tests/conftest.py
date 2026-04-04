@@ -372,7 +372,10 @@ async def test_client(mock_gemini_client: _MockGeminiController, mock_llama_pars
 
     _mock_session_record = MagicMock()
     _mock_session_record.id = "00000000-0000-0000-0000-000000000001"
+    _mock_doc = MagicMock()
+    _mock_doc.id = "00000000-0000-0000-0000-000000000002"
     _mock_db = AsyncMock()
+    _mock_db.add = MagicMock()  # db.add is sync, not async
 
     async def _fake_get_session():
         yield _mock_db
@@ -388,6 +391,9 @@ async def test_client(mock_gemini_client: _MockGeminiController, mock_llama_pars
     with (
         patch("requirement_summarizer_app.get_session", side_effect=_fake_get_session),
         patch("requirement_summarizer_app.create_session_record", new=AsyncMock(return_value=_mock_session_record)),
+        patch("requirement_summarizer_app.save_document_metadata", new=AsyncMock(return_value=_mock_doc)),
+        patch("requirement_summarizer_app.save_analysis_result", new=AsyncMock(return_value=MagicMock())),
+        patch("requirement_summarizer_app.update_document_status", new=AsyncMock()),
         patch("requirement_summarizer_app.update_session_extraction", new=AsyncMock()),
         patch("requirement_summarizer_app.update_session_result", new=AsyncMock()),
         patch("ocr_engine.extract_text", return_value=_mock_extraction),
