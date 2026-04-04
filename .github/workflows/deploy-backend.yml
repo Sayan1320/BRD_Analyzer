@@ -63,6 +63,8 @@ jobs:
             --platform=managed \
             --allow-unauthenticated \
             --port=8080 \
+            --vpc-connector=projects/${{ secrets.GCP_PROJECT_ID }}/locations/${{ secrets.CLOUD_RUN_REGION }}/connectors/alloydb-connector \
+            --vpc-egress=private-ranges-only \
             --set-secrets="GOOGLE_AI_API_KEY=google-ai-api-key:latest,LLAMA_CLOUD_API_KEY=llama-cloud-api-key:latest,ALLOYDB_INSTANCE_URI=alloydb-instance-uri:latest,DB_USER=db-user:latest,DB_PASS=db-pass:latest,DB_NAME=db-name:latest"
 
       - name: Smoke test

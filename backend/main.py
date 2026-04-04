@@ -74,9 +74,12 @@ async def lifespan(app: FastAPI):
     # Validate all required env vars for the requirement summarizer
     validate_env_vars()
 
-    # Initialize the database
+    # Initialize the database (non-fatal — app starts even if DB is unavailable)
     from database import init_db
-    await init_db()
+    try:
+        await init_db()
+    except Exception as exc:
+        logger.warning("db_init_failed_at_startup", error=str(exc))
 
     await gcp_client.connect() if gcp_client else None
     try:
