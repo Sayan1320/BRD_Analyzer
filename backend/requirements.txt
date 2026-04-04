@@ -1,11 +1,12 @@
 fastapi
 uvicorn[standard]
+python-multipart
 sqlalchemy[asyncio]
 asyncpg
 google-cloud-alloydb-connector
 llama-index
-llama-parse
-google-generativeai
+llama-cloud-services
+google-genai
 google-cloud-monitoring>=2.18.0
 structlog
 hypothesis
@@ -15,3 +16,4 @@ httpx
 aiosqlite
 slowapi
 tenacity
+pyyaml
