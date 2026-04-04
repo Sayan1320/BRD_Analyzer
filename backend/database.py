@@ -72,7 +72,7 @@ async def init_db() -> None:
     try:
         from google.cloud.alloydb.connector import AsyncConnector  # type: ignore
 
-        connector = await AsyncConnector.create()
+        connector = AsyncConnector()
 
         async def _getconn():  # type: ignore
             return await connector.connect(
